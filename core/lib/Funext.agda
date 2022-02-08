@@ -184,9 +184,9 @@ module _ where
 
   λ=-equiv : ∀ {j} {P : A → Type j} {f g : Π A P}
     → (f ∼ g) ≃ (f == g)
-  λ=-equiv = (λ= , λ=-is-equiv) where
+  λ=-equiv {j} {P} {f} {g} = (λ= , λ=-is-equiv) where
     abstract
-      λ=-is-equiv : is-equiv λ=
+      λ=-is-equiv : is-equiv {lmax i j} {lmax i j} {f ∼ g} {f == g} λ=
       λ=-is-equiv = StrongFunextDep.λ=-is-equiv
 
   app=-equiv : ∀ {j} {P : A → Type j} {f g : Π A P}

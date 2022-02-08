@@ -51,6 +51,11 @@ private
   from : OneGenFreeAbGroup.El → Group.El ℤ-group
   from = GroupHom.f (F.extend (λ _ → 1))
   abstract
+    to-pres-comp : (z₁ z₂ : ℤ) →
+                   OneGenFreeAbGroup.exp qw[ inl unit :: nil ] (z₁ ℤ+ z₂) ==
+                   OneGenFreeAbGroup.comp
+                   (OneGenFreeAbGroup.exp qw[ inl unit :: nil ] z₁)
+                   (OneGenFreeAbGroup.exp qw[ inl unit :: nil ] z₂)
     to-pres-comp = OneGenFreeAbGroup.exp-+ qw[ inl unit :: nil ]
 
     to-from' : ∀ l → to (Word-extendᴳ ℤ-group (λ _ → 1) l) == qw[ l ]

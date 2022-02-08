@@ -97,17 +97,31 @@ module _ {i j k} {X : Ptd i} {Y : Ptd j} {Z : Ptd k} (⊙e : X ⊙≃ Y) where
   post⊙∘-is-equiv : is-equiv (λ (k : Z ⊙→ X) → ⊙–> ⊙e ⊙∘ k)
   post⊙∘-is-equiv = is-eq (⊙–> ⊙e ⊙∘_) (⊙<– ⊙e ⊙∘_) (to-from ⊙e) (from-to ⊙e) where
     abstract
-      to-from : ∀ {Y} (⊙e : X ⊙≃ Y) (k : Z ⊙→ Y) → ⊙–> ⊙e ⊙∘ (⊙<– ⊙e ⊙∘ k) == k
+      to-from : {Y = Y₁ : Ptd j} (⊙e₁ : _⊙≃_ {i} {j} X Y₁)
+                (k₁ : _⊙→_ {k} {j} Z Y₁) →
+                _==_ {lmax j k}
+                {Σ {lmax j k} {j} (de⊙ Z → de⊙ Y₁)
+                (λ f → _==_ {j} {de⊙ Y₁} (f (pt Z)) (pt Y₁))}
+                (_⊙∘_ {k} {i} {j} {Z} {X} {Y₁} (⊙–> {i} {j} {X} {Y₁} ⊙e₁)
+                (_⊙∘_ {k} {j} {i} {Z} {Y₁} {X} (⊙<– {i} {j} {X} {Y₁} ⊙e₁) k₁))
+                k₁
       to-from ((f , idp) , f-ise) (k , k-pt) = ⊙λ=' (f.f-g ∘ k) (↓-idf=cst-in' $ lemma k-pt)
         where
-          module f = is-equiv f-ise
+          module f = is-equiv {i} {j} f-ise
           lemma : ∀ {y₀} (k-pt : y₀ == f (pt X))
             → ⊙∘-pt f (⊙∘-pt f.g k-pt (f.g-f _)) idp == f.f-g y₀ ∙' k-pt
           lemma idp = ∙-unit-r _ ∙ f.adj _
 
-      from-to : ∀ {Y} (⊙e : X ⊙≃ Y) (k : Z ⊙→ X) → ⊙<– ⊙e ⊙∘ (⊙–> ⊙e ⊙∘ k) == k
+      from-to : {Y = Y₁ : Ptd j} (⊙e₁ : _⊙≃_ {i} {j} X Y₁)
+                (k₁ : _⊙→_ {k} {i} Z X) →
+                _==_ {lmax i k}
+                {Σ {lmax i k} {i} (de⊙ Z → de⊙ X)
+                (λ f → _==_ {i} {de⊙ X} (f (pt Z)) (pt X))}
+                (_⊙∘_ {k} {j} {i} {Z} {Y₁} {X} (⊙<– {i} {j} {X} {Y₁} ⊙e₁)
+                (_⊙∘_ {k} {i} {j} {Z} {X} {Y₁} (⊙–> {i} {j} {X} {Y₁} ⊙e₁) k₁))
+                k₁
       from-to ((f , idp) , f-ise) (k , idp) = ⊙λ=' (f.g-f ∘ k) $ ↓-idf=cst-in' idp
-        where module f = is-equiv f-ise
+        where module f = is-equiv {i} {j} f-ise
 
   post⊙∘-equiv : (Z ⊙→ X) ≃ (Z ⊙→ Y)
   post⊙∘-equiv = _ , post⊙∘-is-equiv
@@ -115,11 +129,27 @@ module _ {i j k} {X : Ptd i} {Y : Ptd j} {Z : Ptd k} (⊙e : X ⊙≃ Y) where
   pre⊙∘-is-equiv : is-equiv (λ (k : Y ⊙→ Z) → k ⊙∘ ⊙–> ⊙e)
   pre⊙∘-is-equiv = is-eq (_⊙∘ ⊙–> ⊙e) (_⊙∘ ⊙<– ⊙e) (to-from ⊙e) (from-to ⊙e) where
     abstract
-      to-from : ∀ {Z} (⊙e : X ⊙≃ Y) (k : X ⊙→ Z) → (k ⊙∘ ⊙<– ⊙e) ⊙∘ ⊙–> ⊙e == k
+      to-from : {Z = Z₁ : Ptd k} (⊙e₁ : _⊙≃_ {i} {j} X Y)
+                (k₁ : _⊙→_ {i} {k} X Z₁) →
+                _==_ {lmax i k}
+                {Σ {lmax i k} {k} (de⊙ X → de⊙ Z₁)
+                (λ f → _==_ {k} {de⊙ Z₁} (f (pt X)) (pt Z₁))}
+                (_⊙∘_ {i} {j} {k} {X} {Y} {Z₁}
+                (_⊙∘_ {j} {i} {k} {Y} {X} {Z₁} k₁ (⊙<– {i} {j} {X} {Y} ⊙e₁))
+                (⊙–> {i} {j} {X} {Y} ⊙e₁))
+                k₁
       to-from ((f , idp) , f-ise) (k , idp) = ⊙λ=' (ap k ∘ f.g-f) $ ↓-idf=cst-in' $ ∙-unit-r _
         where module f = is-equiv f-ise
 
-      from-to : ∀ {Z} (⊙e : X ⊙≃ Y) (k : Y ⊙→ Z) → (k ⊙∘ ⊙–> ⊙e) ⊙∘ ⊙<– ⊙e == k
+      from-to : {Z = Z₁ : Ptd k} (⊙e₁ : _⊙≃_ {i} {j} X Y)
+                (k₁ : _⊙→_ {j} {k} Y Z₁) →
+                _==_ {lmax j k}
+                {Σ {lmax j k} {k} (de⊙ Y → de⊙ Z₁)
+                (λ f → _==_ {k} {de⊙ Z₁} (f (pt Y)) (pt Z₁))}
+                (_⊙∘_ {j} {i} {k} {Y} {X} {Z₁}
+                (_⊙∘_ {i} {j} {k} {X} {Y} {Z₁} k₁ (⊙–> {i} {j} {X} {Y} ⊙e₁))
+                (⊙<– {i} {j} {X} {Y} ⊙e₁))
+                k₁
       from-to ((f , idp) , f-ise) (k , idp) = ⊙λ=' (ap k ∘ f.f-g) $ ↓-idf=cst-in' $
         ∙-unit-r _ ∙ ap-∘ k f (f.g-f (pt X)) ∙ ap (ap k) (f.adj (pt X))
         where module f = is-equiv f-ise

@@ -262,10 +262,38 @@ module _ {i i' j j' k} {X : Ptd i} {X' : Ptd i'} {Y : Ptd j}
     lemma₁ winl* winr* f
     where
       abstract
-        lemma₀ : ∀ {X' Y' Z} (winl* : X' ⊙→ Z) (winr* : Y' ⊙→ Z)
-          (f : X ⊙→ X') (g : Y ⊙→ Y')
-          →  ap (⊙WedgeRec.f winl* winr* ∘ ∨-fmap f g) wglue
-          == ap (⊙WedgeRec.f (winl* ⊙∘ f) (winr* ⊙∘ g)) wglue
+        lemma₀ : {X' = X'' : Ptd i'} {Y' = Y'' : Ptd j'} {Z = Z₁ : Ptd k}
+                 (winl*₁ : _⊙→_ {i'} {k} X'' Z₁) (winr*₁ : _⊙→_ {j'} {k} Y'' Z₁)
+                 (f₁ : _⊙→_ {i} {i'} X X'') (g₁ : _⊙→_ {j} {j'} Y Y'') →
+                 _==_ {k}
+                 {_==_ {k} {de⊙ Z₁}
+                 (_∘_ {lmax i j} {lmax i' j'} {k} {_∨_ {i} {j} X Y}
+                 {λ _ → Pushout {i'} {j'} {lzero} (wedge-span {i'} {j'} X'' Y'')}
+                 {λ v v₁ → de⊙ Z₁}
+                 (⊙WedgeRec.f {i'} {j'} {X''} {Y''} {k} {Z₁} winl*₁ winr*₁)
+                 (∨-fmap {i} {i'} {j} {j'} {X} {X''} {Y} {Y''} f₁ g₁)
+                 (winl {i} {j} {X} {Y} (pt X)))
+                 (_∘_ {lmax i j} {lmax i' j'} {k} {_∨_ {i} {j} X Y}
+                 {λ _ → Pushout {i'} {j'} {lzero} (wedge-span {i'} {j'} X'' Y'')}
+                 {λ v v₁ → de⊙ Z₁}
+                 (⊙WedgeRec.f {i'} {j'} {X''} {Y''} {k} {Z₁} winl*₁ winr*₁)
+                 (∨-fmap {i} {i'} {j} {j'} {X} {X''} {Y} {Y''} f₁ g₁)
+                 (winr {i} {j} {X} {Y} (pt Y)))}
+                 (ap {lmax i j} {k} {_∨_ {i} {j} X Y} {de⊙ Z₁}
+                 (_∘_ {lmax i j} {lmax i' j'} {k} {_∨_ {i} {j} X Y}
+                 {λ _ → Pushout {i'} {j'} {lzero} (wedge-span {i'} {j'} X'' Y'')}
+                 {λ v v₁ → de⊙ Z₁}
+                 (⊙WedgeRec.f {i'} {j'} {X''} {Y''} {k} {Z₁} winl*₁ winr*₁)
+                 (∨-fmap {i} {i'} {j} {j'} {X} {X''} {Y} {Y''} f₁ g₁))
+                 {winl {i} {j} {X} {Y} (pt X)} {winr {i} {j} {X} {Y} (pt Y)}
+                 (wglue {i} {j} {X} {Y}))
+                 (ap {lmax i j} {k}
+                 {Pushout {i} {j} {lzero} (wedge-span {i} {j} X Y)} {de⊙ Z₁}
+                 (⊙WedgeRec.f {i} {j} {X} {Y} {k} {Z₁}
+                 (_⊙∘_ {i} {i'} {k} {X} {X''} {Z₁} winl*₁ f₁)
+                 (_⊙∘_ {j} {j'} {k} {Y} {Y''} {Z₁} winr*₁ g₁))
+                 {winl {i} {j} {X} {Y} (pt X)} {winr {i} {j} {X} {Y} (pt Y)}
+                 (wglue {i} {j} {X} {Y}))
         lemma₀ (winl* , idp) (winr* , winr*-pt) (f , idp) (g , idp) =
           ap (Wedge-rec winl* winr* (! winr*-pt) ∘ ∨-fmap (f , idp) (g , idp)) wglue
             =⟨ ap-∘ (Wedge-rec winl* winr* (! winr*-pt)) (∨-fmap (f , idp) (g , idp)) wglue ⟩
@@ -278,10 +306,12 @@ module _ {i i' j j' k} {X : Ptd i} {X' : Ptd i'} {Y : Ptd j}
           ap (Wedge-rec (winl* ∘ f) (winr* ∘ g) (! winr*-pt)) wglue
             =∎
 
-        lemma₁ : ∀ {X' Z} (winl* : X' ⊙→ Z) (winr* : Y' ⊙→ Z) (f : X ⊙→ X')
-          →  snd (⊙Wedge-rec winl* winr* ⊙∘ ⊙∨-fmap f g)
-          == snd (⊙Wedge-rec (winl* ⊙∘ f) (winr* ⊙∘ g))
+        lemma₁ : {X' = X'' : Ptd i'} {Z = Z₁ : Ptd k} (winl*₁ : X'' ⊙→ Z₁)
+                 (winr*₁ : Y' ⊙→ Z₁) (f₁ : X ⊙→ X'') →
+                 snd (⊙Wedge-rec winl*₁ winr*₁ ⊙∘ ⊙∨-fmap f₁ g) ==
+                 snd (⊙Wedge-rec (winl*₁ ⊙∘ f₁) (winr*₁ ⊙∘ g))
         lemma₁ (f , idp) _ (winl* , idp) = idp
+
   ⊙∨-rec-fmap = ⊙Wedge-rec-fmap
 
 module _ {i i' j j'} {X : Ptd i} {X' : Ptd i'} {Y : Ptd j}
@@ -292,9 +322,33 @@ module _ {i i' j j'} {X : Ptd i} {X' : Ptd i'} {Y : Ptd j}
     Wedge-elim (λ _ → idp) (λ _ → idp) (↓-='-in' $ ! $ lemma₀ f g) , lemma₁ f g
     where
       abstract
-        lemma₀ : ∀ {X' Y'} (f : X ⊙→ X') (g : Y ⊙→ Y')
-          →  ap (projl ∘ ∨-fmap f g) wglue
-          == ap (⊙WedgeRec.f f ⊙cst) wglue
+        lemma₀ : {X' = X'' : Ptd i'} {Y' = Y'' : Ptd j'} (f₁ : _⊙→_ {i} {i'} X X'')
+                 (g₁ : _⊙→_ {j} {j'} Y Y'') →
+                 _==_ {i'}
+                 {_==_ {i'} {de⊙ X''}
+                 (_∘_ {lmax i j} {lmax i' j'} {i'} {_∨_ {i} {j} X Y}
+                 {λ _ → Pushout {i'} {j'} {lzero} (wedge-span {i'} {j'} X'' Y'')}
+                 {λ v v₁ → de⊙ X''} (projl {i'} {j'} {X''} {Y''})
+                 (∨-fmap {i} {i'} {j} {j'} {X} {X''} {Y} {Y''} f₁ g₁)
+                 (winl {i} {j} {X} {Y} (pt X)))
+                 (_∘_ {lmax i j} {lmax i' j'} {i'} {_∨_ {i} {j} X Y}
+                 {λ _ → Pushout {i'} {j'} {lzero} (wedge-span {i'} {j'} X'' Y'')}
+                 {λ v v₁ → de⊙ X''} (projl {i'} {j'} {X''} {Y''})
+                 (∨-fmap {i} {i'} {j} {j'} {X} {X''} {Y} {Y''} f₁ g₁)
+                 (winr {i} {j} {X} {Y} (pt Y)))}
+                 (ap {lmax i j} {i'} {_∨_ {i} {j} X Y} {de⊙ X''}
+                 (_∘_ {lmax i j} {lmax i' j'} {i'} {_∨_ {i} {j} X Y}
+                 {λ _ → Pushout {i'} {j'} {lzero} (wedge-span {i'} {j'} X'' Y'')}
+                 {λ v v₁ → de⊙ X''} (projl {i'} {j'} {X''} {Y''})
+                 (∨-fmap {i} {i'} {j} {j'} {X} {X''} {Y} {Y''} f₁ g₁))
+                 {winl {i} {j} {X} {Y} (pt X)} {winr {i} {j} {X} {Y} (pt Y)}
+                 (wglue {i} {j} {X} {Y}))
+                 (ap {lmax i j} {i'}
+                 {Pushout {i} {j} {lzero} (wedge-span {i} {j} X Y)} {de⊙ X''}
+                 (⊙WedgeRec.f {i} {j} {X} {Y} {i'} {X''} f₁
+                 (⊙cst {j} {i'} {Y} {X''}))
+                 {winl {i} {j} {X} {Y} (pt X)} {winr {i} {j} {X} {Y} (pt Y)}
+                 (wglue {i} {j} {X} {Y}))
         lemma₀ (f , idp) (g , idp) =
           ap (projl ∘ ∨-fmap (f , idp) (g , idp)) wglue
             =⟨ ap-∘ projl (∨-fmap (f , idp) (g , idp)) wglue ⟩
@@ -307,7 +361,7 @@ module _ {i i' j j'} {X : Ptd i} {X' : Ptd i'} {Y : Ptd j}
           ap (⊙WedgeRec.f (f , idp) ⊙cst) wglue
             =∎
 
-        lemma₁ : ∀ {X' Y'} (f : X ⊙→ X') (g : Y ⊙→ Y')
+        lemma₁ : ∀ {X' Y'} (f : _⊙→_ {i = i} {j = i'} X X') (g : _⊙→_ {i = j} {j = j'} Y Y')
           →  snd (⊙projl ⊙∘ ⊙∨-fmap f g)
           == snd (⊙Wedge-rec {Y = Y} f ⊙cst)
         lemma₁ (f , idp) (g , idp) = idp
@@ -317,9 +371,9 @@ module _ {i i' j j'} {X : Ptd i} {X' : Ptd i'} {Y : Ptd j}
     Wedge-elim (λ _ → idp) (λ _ → idp) (↓-='-in' $ ! $ lemma₀ f g) , lemma₁ f g
     where
       abstract
-        lemma₀ : ∀ {X' Y'} (f : X ⊙→ X') (g : Y ⊙→ Y')
+        lemma₀ : ∀ {X' Y'} (f : _⊙→_ {i = i} {j = i'} X X') (g : _⊙→_ {i = j} {j = j'} Y Y')
           →  ap (projr ∘ ∨-fmap f g) wglue
-          == ap (⊙WedgeRec.f ⊙cst g) wglue
+          == ap (⊙WedgeRec.f {i = i} {X = X} ⊙cst g) wglue
         lemma₀ (f , idp) (g , idp) =
           ap (projr ∘ ∨-fmap (f , idp) (g , idp)) wglue
             =⟨ ap-∘ projr (∨-fmap (f , idp) (g , idp)) wglue ⟩
@@ -332,7 +386,7 @@ module _ {i i' j j'} {X : Ptd i} {X' : Ptd i'} {Y : Ptd j}
           ap (⊙WedgeRec.f ⊙cst (g , idp)) wglue
             =∎
 
-        lemma₁ : ∀ {X' Y'} (f : X ⊙→ X') (g : Y ⊙→ Y')
+        lemma₁ : ∀ {X' Y'} (f : _⊙→_ {i = i} {j = i'} X X') (g : _⊙→_ {i = j} {j = j'} Y Y')
           →  snd (⊙projr ⊙∘ ⊙∨-fmap f g)
           == snd (⊙Wedge-rec {X = X} ⊙cst g)
         lemma₁ (f , idp) (g , idp) = idp
@@ -347,7 +401,7 @@ module _ {i j k} {X : Ptd i} {Y : Ptd j} {Z : Ptd k}
     Wedge-elim (λ _ → idp) (λ _ → idp) (↓-='-in' $ ! $ lemma₀ f g) , lemma₁ f g
     where
       abstract
-        lemma₀ : ∀ {Z} (f : X ⊙→ Z) (g : Y ⊙→ Z)
+        lemma₀ : ∀ {Z} (f : _⊙→_ {i = i} {j = k} X Z) (g : _⊙→_ {i = j} {j = k} Y Z)
           →  ap (⊙WedgeRec.f (⊙idf _) (⊙idf _) ∘ ∨-fmap f g) wglue
           == ap (⊙WedgeRec.f f g) wglue
         lemma₀ (f , idp) (g , g-pt) =
@@ -374,7 +428,7 @@ module _ {i j k} {X : Ptd i} {Y : Ptd j} {Z : Ptd k}
           ap (⊙WedgeRec.f (f , idp) (g , g-pt) ) wglue
             =∎
 
-        lemma₁ : ∀ {Z} (f : X ⊙→ Z) (g : Y ⊙→ Z)
+        lemma₁ : ∀ {Z} (f : _⊙→_ {i = i} {j = k} X Z) (g : _⊙→_ {i = j} {j = k} Y Z)
           →  snd (⊙Wedge-rec (⊙idf _) (⊙idf _) ⊙∘ ⊙∨-fmap f g)
           == snd (⊙Wedge-rec f g)
         lemma₁ (f , idp) (g , g-pt) = idp

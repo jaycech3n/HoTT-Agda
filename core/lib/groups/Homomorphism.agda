@@ -344,20 +344,23 @@ module _ {i j} (G : Group i) (H : AbGroup j)
     module G = Group G
     module H = AbGroup H
 
-  hom-comp : (G →ᴳ H.grp) → (G →ᴳ H.grp) → (G →ᴳ H.grp)
-  hom-comp φ ψ = group-hom (λ g → H.comp (φ.f g) (ψ.f g)) hom-comp-pres-comp where
-    module φ = GroupHom φ
-    module ψ = GroupHom ψ
-    abstract
-      hom-comp-pres-comp : ∀ g₁ g₂
-        →  H.comp (φ.f (G.comp g₁ g₂)) (ψ.f (G.comp g₁ g₂))
-        == H.comp (H.comp (φ.f g₁) (ψ.f g₁)) (H.comp (φ.f g₂) (ψ.f g₂))
-      hom-comp-pres-comp g₁ g₂ =
+  abstract
+    hom-comp-pres-comp : (φ : G →ᴳ H.grp) → (ψ : G →ᴳ H.grp) → (g₁ : _) (g₂ : _)
+        →  H.comp (GroupHom.f φ (G.comp g₁ g₂)) (GroupHom.f ψ (G.comp g₁ g₂))
+        == H.comp (H.comp (GroupHom.f φ g₁) (GroupHom.f ψ g₁)) (H.comp (GroupHom.f φ g₂) (GroupHom.f ψ g₂))
+    hom-comp-pres-comp φ ψ g₁ g₂ =
         H.comp (φ.f (G.comp g₁ g₂)) (ψ.f (G.comp g₁ g₂))
           =⟨ ap2 H.comp (φ.pres-comp g₁ g₂) (ψ.pres-comp g₁ g₂) ⟩
         H.comp (H.comp (φ.f g₁) (φ.f g₂)) (H.comp (ψ.f g₁) (ψ.f g₂))
           =⟨ H.interchange (φ.f g₁) (φ.f g₂) (ψ.f g₁) (ψ.f g₂) ⟩
         H.comp (H.comp (φ.f g₁) (ψ.f g₁)) (H.comp (φ.f g₂) (ψ.f g₂)) =∎
+        where
+          module φ = GroupHom φ
+          module ψ = GroupHom ψ
+
+
+  hom-comp : (G →ᴳ H.grp) → (G →ᴳ H.grp) → (G →ᴳ H.grp)
+  hom-comp φ ψ = group-hom (λ g → H.comp (GroupHom.f φ g) (GroupHom.f ψ g)) (hom-comp-pres-comp φ ψ)
 
   hom-group-structure : GroupStructure (G →ᴳ H.grp)
   hom-group-structure = record {M} where
@@ -394,16 +397,47 @@ module _ {i j} (G : Group i) (H : AbGroup j)
 module _ {i j} {G : Group i} {H : AbGroup j} where
   app-hom : Group.El G → hom-group G H →ᴳ AbGroup.grp H
   app-hom g = group-hom (λ φ → GroupHom.f φ g) lemma
-    where abstract lemma = λ φ ψ → idp
+    where
+      abstract
+        lemma : (φ ψ : Group.El (hom-group G H)) →
+                GroupHom.f (Group.comp (hom-group G H) φ ψ) g ==
+                GroupHom.f (Group.comp (hom-group G H) φ ψ) g
+        lemma = λ φ ψ → idp
 
   appᴳ = app-hom
 
 pre∘ᴳ-hom : ∀ {i j k} {G : Group i} {H : Group j} (K : AbGroup k)
   → (G →ᴳ H) → (hom-group H K →ᴳ hom-group G K)
-pre∘ᴳ-hom K φ = record { f = _∘ᴳ φ ; pres-comp = lemma}
-  where abstract lemma = λ _ _ → group-hom= idp
+pre∘ᴳ-hom {G = G} {H = H} K φ = record { f = _∘ᴳ φ ; pres-comp = lemma}
+  where
+    abstract
+      lemma : (z₁ z₂ : Group.El (hom-group H K)) →
+              Group.comp (hom-group H K) z₁ z₂ ∘ᴳ φ ==
+              group-hom (GroupHom.f (Group.comp (hom-group H K) z₁ z₂ ∘ᴳ φ))
+              (hom-comp-pres-comp G K (z₁ ∘ᴳ φ) (z₂ ∘ᴳ φ))
+      lemma = λ _ _ → group-hom= idp
 
 post∘ᴳ-hom : ∀ {i j k} (G : Group i) (H : AbGroup j) (K : AbGroup k)
   → (AbGroup.grp H →ᴳ AbGroup.grp K) → (hom-group G H →ᴳ hom-group G K)
-post∘ᴳ-hom G H K φ = record { f = φ ∘ᴳ_ ; pres-comp = lemma}
-  where abstract lemma = λ _ _ → group-hom= $ λ= λ _ → GroupHom.pres-comp φ _ _
+post∘ᴳ-hom {i} {j} {k} G H K φ = record { f = φ ∘ᴳ_ ; pres-comp = lemma}
+  where
+    abstract
+      lemma : (z₁ z₂ : Group.El (hom-group {i} {j} G H)) →
+            _==_ {lmax i k} {GroupHom {i} {k} G (fst K)}
+            (group-hom
+            (λ z₃ →
+              GroupHom.f φ
+              (Group.comp {j} (AbGroup.grp {j} H) (GroupHom.f z₁ z₃)
+            (GroupHom.f z₂ z₃)))
+            (∘ᴳ-pres-comp {i} {j} {k} {G} {AbGroup.grp {j} H}
+            {AbGroup.grp {k} K} φ
+            (Group.comp {lmax i j} (hom-group {i} {j} G H) z₁ z₂)))
+            (group-hom
+            (λ z₃ →
+              GroupStructure.comp (Group.group-struct (fst K))
+            (GroupHom.f φ (GroupHom.f z₁ z₃))
+            (GroupHom.f φ (GroupHom.f z₂ z₃)))
+            (hom-comp-pres-comp {i} {k} G K
+            (_∘ᴳ_ {i} {j} {k} {G} {AbGroup.grp {j} H} {AbGroup.grp {k} K} φ z₁)
+            (_∘ᴳ_ {i} {j} {k} {G} {AbGroup.grp {j} H} {AbGroup.grp {k} K} φ z₂)))
+      lemma = λ _ _ → group-hom= $ λ= λ _ → GroupHom.pres-comp φ _ _

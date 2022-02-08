@@ -121,7 +121,7 @@ module lib.types.GroupSet {i} where
   groupset-hom= {gset₂ = gset₂} f= =
     groupset-hom='
       (λ= f=)
-      prop-has-all-paths-↓ where
+      prop-has-all-paths-↓
 
   group-to-group-set : ∀ (grp : Group i) → GroupSet grp i
   group-to-group-set grp = record {

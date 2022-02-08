@@ -51,9 +51,44 @@ CommSquareEquivᴳ-inverse-v : ∀ {i₀ i₁ j₀ j₁}
   {φ₀ : G₀ →ᴳ H₀} {φ₁ : G₁ →ᴳ H₁} {ξG : G₀ →ᴳ G₁} {ξH : H₀ →ᴳ H₁}
   → (cse : CommSquareEquivᴳ φ₀ φ₁ ξG ξH)
   → CommSquareEquivᴳ φ₁ φ₀ (GroupIso.g-hom (ξG , fst (snd cse))) (GroupIso.g-hom (ξH , snd (snd cse)))
-CommSquareEquivᴳ-inverse-v (comm-sqrᴳ cs , ise)
+CommSquareEquivᴳ-inverse-v {i₀} {i₁} {j₀} {j₁} {G₀} {G₁} {H₀} {H₁} {φ₀} {φ₁} {ξG} {ξH} (comm-sqrᴳ cs , ise)
   with CommSquareEquiv-inverse-v (comm-sqr cs , ise)
-... | (comm-sqr cs' , ise') = cs'' , ise' where abstract cs'' = comm-sqrᴳ cs'
+... | (comm-sqr cs' , ise') = cs'' , ise' where
+  abstract
+    cs'' : CommSquareᴳ φ₁ φ₀
+           (group-hom (is-equiv.g (fst ise))
+           (λ b₁ b₂ →
+             ap2
+           (λ w₁ w₂ →
+             is-equiv.g (fst ise)
+           (GroupStructure.comp (Group.group-struct G₁) w₁ w₂))
+           (! (is-equiv.f-g (fst ise) b₁)) (! (is-equiv.f-g (fst ise) b₂))
+             ∙
+           !
+             (ap (is-equiv.g (fst ise))
+           (GroupHom.pres-comp ξG (is-equiv.g (fst ise) b₁)
+           (is-equiv.g (fst ise) b₂)))
+             ∙
+           is-equiv.g-f (fst ise)
+           (GroupStructure.comp (Group.group-struct G₀)
+           (is-equiv.g (fst ise) b₁) (is-equiv.g (fst ise) b₂))))
+           (group-hom (is-equiv.g (snd ise))
+           (λ b₁ b₂ →
+             ap2
+             (λ w₁ w₂ →
+               is-equiv.g (snd ise)
+               (GroupStructure.comp (Group.group-struct H₁) w₁ w₂))
+               (! (is-equiv.f-g (snd ise) b₁)) (! (is-equiv.f-g (snd ise) b₂))
+                 ∙
+               !
+               (ap (is-equiv.g (snd ise))
+               (GroupHom.pres-comp ξH (is-equiv.g (snd ise) b₁)
+           (is-equiv.g (snd ise) b₂)))
+           ∙
+         is-equiv.g-f (snd ise)
+         (GroupStructure.comp (Group.group-struct H₀)
+         (is-equiv.g (snd ise) b₁) (is-equiv.g (snd ise) b₂))))
+    cs'' = comm-sqrᴳ cs'
 
 CommSquareᴳ-inverse-v : ∀ {i₀ i₁ j₀ j₁}
   {G₀ : Group i₀} {G₁ : Group i₁} {H₀ : Group j₀} {H₁ : Group j₁}

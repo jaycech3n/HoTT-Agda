@@ -15,8 +15,10 @@ P₁ ⊆ P₂ = ∀ a → SubtypeProp.prop P₁ a → SubtypeProp.prop P₂ a
 infix 80 _∘sub_
 _∘sub_ : ∀ {i j k} {A : Type i} {B : Type j}
   → SubtypeProp B k → (A → B) → SubtypeProp A k
-P ∘sub f = SubtypeProp.prop P ∘ f , level where
-  abstract level = SubtypeProp.level P ∘ f
+_∘sub_{A = A} P f = SubtypeProp.prop P ∘ f , level where
+  abstract
+    level : (a : A) → is-prop (fst P (f a))
+    level = SubtypeProp.level P ∘ f
 
 Subtype-has-dec-eq : ∀ {i j} {A : Type i} (subProp : SubtypeProp A j)
   → has-dec-eq A → has-dec-eq (Subtype subProp)

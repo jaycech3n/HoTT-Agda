@@ -224,7 +224,9 @@ abstract
             (λ x' → ↓-cst=app-in (∙'-unit-l _ ∙ mers-eq n x x'))
             (contr-center cA))))
     where
-    instance _ = cA
+    instance
+      cc : is-connected n A
+      cc = cA
 
     mers-eq : ∀ {i} {A : Type i} (n : ℕ₋₂)
       {{_ : is-connected n A}} → (x x' : A)

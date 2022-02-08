@@ -90,11 +90,20 @@ dual-functor-map {C = C} {D = D} F =
               ap (λ s → s ∙ e₁₋₂ ∙ e₂₋₃) (!-ap (λ f' → F.F₁ f') (C.assoc h g f)) ⟩
         ap (λ f' → F.F₁ f') (! (C.assoc h g f)) ◃∙ e₁₋₂ ◃∙ e₂₋₃ ◃∎ ∎ₛ
         where
+        e₁₋₂ : F.F₁ (C.comp (C.comp h g) f) == D.comp (F.F₁ (C.comp h g)) (F.F₁ f)
         e₁₋₂ = F.pres-comp (C.comp h g) f
+        e₂₋₃ : D.comp (F.F₁ (C.comp h g)) (F.F₁ f) ==
+               D.comp (D.comp (F.F₁ h) (F.F₁ g)) (F.F₁ f)
         e₂₋₃ = ap (λ s → D.comp s (F.F₁ f)) (F.pres-comp h g)
+        e₃₋₄ : D.comp (D.comp (F.F₁ h) (F.F₁ g)) (F.F₁ f) ==
+               D.comp (F.F₁ h) (D.comp (F.F₁ g) (F.F₁ f))
         e₃₋₄ = D.assoc (F.F₁ h) (F.F₁ g) (F.F₁ f)
+        e₁₋₅ : F.F₁ (C.comp (C.comp h g) f) == F.F₁ (C.comp h (C.comp g f))
         e₁₋₅ = ap F.F₁ (C.assoc h g f)
+        e₅₋₆ : F.F₁ (C.comp h (C.comp g f)) == D.comp (F.F₁ h) (F.F₁ (C.comp g f))
         e₅₋₆ = F.pres-comp h (C.comp g f)
+        e₆₋₄ : D.comp (F.F₁ h) (F.F₁ (C.comp g f)) ==
+               D.comp (F.F₁ h) (D.comp (F.F₁ g) (F.F₁ f))
         e₆₋₄ = ap (D.comp (F.F₁ h)) (F.pres-comp g f)
 
 from-double-dual : ∀ {i j} → (C : TwoSemiCategory i j)

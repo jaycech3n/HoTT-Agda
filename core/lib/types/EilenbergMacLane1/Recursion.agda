@@ -408,17 +408,56 @@ module EM₁Rec' {j} {C : Type j}
         =⟨ emloop-comp-path-rewrite₂ p₀₁ p₁₂ p₀₂ q₀₁ q₁₂ q₀₂ p-comp q-comp r₀₁ r₁₂ r₀₂ ⟩
       emloop-β (G.comp g₁ g₂) ∙ emloop-comp* g₁ g₂ =∎
       where
+        p₀₁ : embase' G == embase' G
         p₀₁ = emloop g₁
+        p₁₂ : embase' G == embase' G
         p₁₂ = emloop g₂
+        p₀₂ : embase' G == embase' G
         p₀₂ = emloop (G.comp g₁ g₂)
+        q₀₁ : embase* == embase*
         q₀₁ = emloop* g₁
+        q₁₂ : embase* == embase*
         q₁₂ = emloop* g₂
+        q₀₂ : embase* == embase*
         q₀₂ = emloop* (G.comp g₁ g₂)
+        r₀₁ : apd M.f (emloop g₁) == emloop** g₁
         r₀₁ = M.emloop-β g₁
+        r₁₂ : apd M.f (emloop g₂) == emloop** g₂
         r₁₂ = M.emloop-β g₂
+        r₀₂ : apd M.f (emloop (G.comp g₁ g₂)) == emloop** (G.comp g₁ g₂)
         r₀₂ = M.emloop-β (G.comp g₁ g₂)
+        p-comp : emloop' G (G.comp g₁ g₂) == emloop' G g₁ ∙ emloop' G g₂
         p-comp = emloop-comp g₁ g₂
+        q-comp : emloop* (G.comp g₁ g₂) == emloop* g₁ ∙ emloop* g₂
         q-comp = emloop-comp* g₁ g₂
+        -- fun : PathOver
+        --       (λ w → PathOver (λ _ → C) w (f (embase' G)) (f (embase' G))) p-comp
+        --       (apd f (emloop' G (G.comp g₁ g₂))) (↓-cst-in (emloop* g₁) ∙ᵈ ↓-cst-in (emloop* g₂)) →
+        --       ap f p₀₂ == emloop* g₁ ∙ emloop* g₂
+        fun : PathOver {i} {j}
+              {_==_ {i} {EM₁ {i} G} (embase' {i} G) (embase' {i} G)}
+              (λ w →
+              PathOver {i} {j} {EM₁ {i} G} (λ _ → C) {embase' {i} G}
+              {embase' {i} G} w (f (embase' {i} G)) (f (embase' {i} G)))
+              {emloop' {i} G (G.comp g₁ g₂)}
+              {_∙_ {i} {EM₁ {i} G} {embase' {i} G} {embase' {i} G}
+              {embase' {i} G} (emloop' {i} G g₁) (emloop' {i} G g₂)}
+              p-comp
+              (apd {i} {j} {EM₁ {i} G} {λ _ → C} f {embase' {i} G}
+              {embase' {i} G} (emloop' G (G.comp g₁ g₂)))
+              (_∙ᵈ_ {i} {j} {EM₁ {i} G} {λ _ → C} {embase' {i} G} {embase' {i} G}
+              {embase' {i} G} {emloop {i} {G} g₁} {emloop {i} {G} g₂}
+              {f (embase' {i} G)} {f (embase' {i} G)} {f (embase' {i} G)}
+              (↓-cst-in {i} {j} {EM₁ {i} G} {C} {embase' {i} G} {embase' {i} G}
+              {emloop {i} {G} g₁} {f (embase' {i} G)} {f (embase' {i} G)}
+              (emloop* g₁))
+              (↓-cst-in {i} {j} {EM₁ {i} G} {C} {embase' {i} G} {embase' {i} G}
+              {emloop {i} {G} g₂} {f (embase' {i} G)} {f (embase' {i} G)}
+              (emloop* g₂))) →
+                _==_ {j} {_==_ {j} {C} (f (embase' {i} G)) (f (embase' {i} G))}
+              (ap {i} {j} {EM₁ {i} G} {C} f {embase' {i} G} {embase' {i} G} p₀₂)
+              (_∙_ {j} {C} {f (embase' {i} G)} {embase*} {f (embase' {i} G)}
+              (emloop* g₁) (emloop* g₂))
         fun = middle-fun p₀₁ p₁₂ p₀₂ q₀₁ q₁₂ q₀₂ p-comp
 
 module EM₁Rec {j} {C : Type j}

@@ -220,7 +220,13 @@ module _ {i j} {A : Type i} {B : A → Type j} {f g : Π A B} where
 
   abstract
     private
+      ◃idp' : {x : A} {v : B x} {w = w₁ : B x} (q : _==_ {j} {B x} w₁ v) →
+              _==_ {j} {_==_ {j} {B x} w₁ v}
+              (_◃_ {i} {j} {A} {B} {x} {x} {x} {idp} {idp} {w₁} {v} {v} q idp) q
       ◃idp' = ◃idp {B = B}
+      idp▹' : {x : A} {v : B x} {w = w₁ : B x} (q : _==_ {j} {B x} v w₁) →
+              _==_ {j} {_==_ {j} {B x} v w₁}
+              (_▹_ {i} {j} {A} {B} {x} {x} {x} {idp} {idp} {v} {v} {w₁} idp q) q
       idp▹' = idp▹ {B = B}
 
     ↓-=-in : {x y : A} {p : x == y} {u : g x == f x} {v : g y == f y}

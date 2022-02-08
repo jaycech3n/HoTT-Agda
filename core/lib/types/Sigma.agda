@@ -145,10 +145,18 @@ module _ {i j} {A : Type i} {B : A → Type j} where
 Σ-level : ∀ {i j} {n : ℕ₋₂} {A : Type i} {P : A → Type j}
   → has-level n A → ((x : A) → has-level n (P x))
     → has-level n (Σ A P)
-Σ-level {n = ⟨-2⟩} p q = has-level-in ((contr-center p , (contr-center (q (contr-center p)))) , lemma)
-  where abstract lemma = λ y → pair= (contr-path p _) (from-transp! _ _ (contr-path (q _) _))
-Σ-level {n = S n} p q = has-level-in lemma where
+Σ-level {i} {j} {n = ⟨-2⟩} {A} {P} p q = has-level-in ((contr-center p , (contr-center (q (contr-center p)))) , lemma)
+  where
+    abstract
+      lemma : (y : Σ {i} {j} A P) → _==_ {lmax i j} {Σ {i} {j} A P}
+        (contr-center {i} {A} p , contr-center {j} {P (fst (has-level-apply p))}
+          (q (fst (has-level-apply p)))) y
+      lemma = λ y → pair= (contr-path p _) (from-transp! _ _ (contr-path (q _) _))
+      
+Σ-level {i} {j} {n = S n} {A} {P} p q = has-level-in lemma where
   abstract
+    lemma : (x₁ y : Σ {i} {j} A P) →
+                has-level {lmax i j} n (_==_ {lmax i j} {Σ {i} {j} A P} x₁ y)
     lemma = λ x y → equiv-preserves-level (=Σ-econv x y)
       {{Σ-level (has-level-apply p _ _) (λ _ →
         equiv-preserves-level ((to-transp-equiv _ _)⁻¹) {{has-level-apply (q _) _ _}})}}

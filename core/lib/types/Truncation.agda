@@ -54,7 +54,7 @@ module TruncRecType {i j} {n : ℕ₋₂} {A : Type i} (d : A → n -Type j) whe
 
     from : Trunc (S n) (Σ A (fst ∘ d)) → Σ (Trunc (S n) A) (fst ∘ f)
     from = Trunc-rec {{Σ-level ⟨⟩ (λ x → raise-level _ (snd (f x)))}}
-                     from-aux  where
+                     from-aux
 
     to-from : (x : Trunc (S n) (Σ A (fst ∘ d))) → to (from x) == x
     to-from = Trunc-elim (λ _ → idp)

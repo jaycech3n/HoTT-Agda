@@ -41,7 +41,12 @@ module _ {i j} {G : Group i} (P : SubgroupProp G j) where
 
   Subgroup : Group (lmax i j)
   Subgroup = group _ subgroup-struct
-    where abstract instance SubEl-level = Subtype-level P.subEl-prop
+    where
+      abstract
+        instance
+          SubEl-level : {n : ℕ₋₂} ⦃ _ : has-level (S n) G.El ⦄ →
+                        has-level (S n) (Subtype P.subEl-prop)
+          SubEl-level = Subtype-level P.subEl-prop
 
 module Subgroup {i j} {G : Group i} (P : SubgroupProp G j) where
   private

@@ -197,7 +197,21 @@ abstract
 Πᴳ-emap-l : ∀ {i j k} {A : Type i} {B : Type j} (F : B → Group k)
             → (e : A ≃ B) → Πᴳ A (F ∘ –> e) ≃ᴳ Πᴳ B F
 Πᴳ-emap-l {A = A} {B = B} F e = ≃-to-≃ᴳ (Π-emap-l (Group.El ∘ F) e) lemma
-  where abstract lemma = λ f g → λ= λ b → transp-El-pres-comp F (<–-inv-r e b) (f (<– e b)) (g (<– e b))
+  where
+    abstract
+      lemma : (f g : (x : A) → ((λ x₁ → Group.El (F x₁)) ∘ –> e) x) →
+              (λ x →
+                transport (Group.El ∘ F) (is-equiv.f-g (snd e) x)
+              (Group.comp (F (–> e (<– e x))) (f (is-equiv.g (snd e) x))
+              (g (is-equiv.g (snd e) x))))
+                ==
+              (λ x →
+                Group.comp (F x)
+              (transport (Group.El ∘ F) (is-equiv.f-g (snd e) x)
+              (f (is-equiv.g (snd e) x)))
+              (transport (Group.El ∘ F) (is-equiv.f-g (snd e) x)
+              (g (is-equiv.g (snd e) x))))
+      lemma = λ f g → λ= λ b → transp-El-pres-comp F (<–-inv-r e b) (f (<– e b)) (g (<– e b))
 
 {- 0ᴳ is a unit for product -}
 ×ᴳ-unit-l : ∀ {i} (G : Group i) → 0ᴳ ×ᴳ G ≃ᴳ G

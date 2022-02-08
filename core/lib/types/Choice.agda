@@ -151,8 +151,8 @@ equiv-preserves-choice {n = n} {A} {B} (f , f-ise) A-hc C = is-eq to from to-fro
         g (f (f.g b))
           =∎)
 
-    from-to' : ∀ g {b b'} (path : f (f.g b) == b')
-      → transport C path (g (f (f.g b))) == g b'
+    from-to' : (g : (x : B) → C x) {b b' : B} (path : f (f.g b) == b') →
+               transport C path (g (f (f.g b))) == g b'
     from-to' g idp = idp
 
     from-to : ∀ g → from (to g) == g
