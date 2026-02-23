@@ -147,11 +147,11 @@ module _ where
     module λ=-is-equiv {j} {P : A → Type j} {f g : Π A P}
       = is-equiv (StrongFunextDep.λ=-is-equiv {f = f} {g = g})
 
-  λ= : ∀ {j} {P : A → Type j} {f g : Π A P}
-       → f ∼ g → f == g
-  λ= = FunextDep.λ=
-
   abstract
+    λ= : ∀ {j} {P : A → Type j} {f g : Π A P}
+       → f ∼ g → f == g
+    λ= = FunextDep.λ=
+
     app=-β : ∀ {j} {P : A → Type j} {f g : Π A P}
       → (p : f ∼ g) (x : A) → app= (λ= p) x == p x
     app=-β p x = app= (λ=-is-equiv.g-f p) x
